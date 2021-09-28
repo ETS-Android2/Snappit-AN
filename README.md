@@ -1,7 +1,7 @@
-![GitHub language count](https://img.shields.io/github/languages/count/ClaudiaAF/Snappit_AN?colorB=dd537b)
-![GitHub repo size](https://img.shields.io/github/repo-size/ClaudiaAF/Snappit_AN?colorB=dd537b)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ClaudiaAF/Snappit_AN?colorB=dd537b)
-![GitHub watchers](https://img.shields.io/github/watchers/ClaudiaAF/Snappit_AN?colorB=dd537b)
+![GitHub language count](https://img.shields.io/github/languages/count/ClaudiaAF/Snappit-AN?colorB=dd537b)
+![GitHub repo size](https://img.shields.io/github/repo-size/ClaudiaAF/Snappit-AN?colorB=dd537b)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/ClaudiaAF/Snappit-AN?colorB=dd537b)
+![GitHub watchers](https://img.shields.io/github/watchers/ClaudiaAF/Snappit-AN?colorB=dd537b)
 
 
 
@@ -9,12 +9,8 @@
 <br />
 <p align="center">
   <a href="https://github.com/claudiaAF/Snappit-AF">
-    <img src="" width="195" alt="logo" >
- 
-
+    <img src="https://user-images.githubusercontent.com/64257497/135145069-5d5208e2-8087-4873-8ee4-0f85989b0f44.png" width="195" alt="logo" >
   </a>
-
-  <h3 align="center">Snappit.</h3>
 
   <p align="center">
     Celebrity Recogniser App
