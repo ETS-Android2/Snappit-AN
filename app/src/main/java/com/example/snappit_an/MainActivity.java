@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getCredential(){
         amazonRekognitionClient = new AmazonRekognitionClient(new AWSCredentialProvider());
-        amazonRekognitionClient.setRegion(Region.getRegion(Regions.AF_SOUTH_1));    //Put Your AWS Region here
+        amazonRekognitionClient.setRegion(Region.getRegion(Regions.US_EAST_2));
     }
 
     public List<String> findCelebrity() {
