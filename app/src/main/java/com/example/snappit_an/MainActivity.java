@@ -2,95 +2,140 @@ package com.example.snappit_an;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.View;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.rekognition.AmazonRekognition;
 import com.amazonaws.services.rekognition.AmazonRekognitionClient;
 import com.amazonaws.services.rekognition.model.BoundingBox;
 import com.amazonaws.services.rekognition.model.Celebrity;
 import com.amazonaws.services.rekognition.model.Image;
 import com.amazonaws.services.rekognition.model.RecognizeCelebritiesRequest;
 import com.amazonaws.services.rekognition.model.RecognizeCelebritiesResult;
+import com.amazonaws.services.rekognition.model.S3Object;
 import com.amazonaws.util.IOUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private static AmazonRekognition rekogClient;
+//    private static final String poolId = "us-east-1:e8a685f7-17c3-4426-8682-7f964bad8f16";
+//    private static final Regions region = Regions.US_EAST_1;
+    // Camera activity request codes
+    private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
+    private Uri fileUri;
+
     AmazonRekognitionClient amazonRekognitionClient;
+
+//    public static void init(Context context) {
+//        if (rekogClient != null) {
+//            CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+//                    context,
+//                    poolId,
+//                    region
+//            );
+//            rekogClient = new AmazonRekognitionClient(credentialsProvider);
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        getCredential();
-        Log.i("Credentials", "Credentials gathered succesfully");
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        if (SDK_INT > 8) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            //your codes here
+
+
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+            getCredential();
+        }
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Opening Camera . . .", Snackbar.LENGTH_LONG)
+                        .setAction("Open", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+                                startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+                            }
+                        }).show();
+
+            }
+        });
+
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myintent = new Intent(MainActivity.this, UploadActivity.class);
+                startActivity(myintent);
+            }
+        };
+
+        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.fab2);
+        button.setOnClickListener(onClickListener);
+
+        try {
+            findCelebrity();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void getCredential(){
-        amazonRekognitionClient = new AmazonRekognitionClient(new AWSCredentialProvider());
-        amazonRekognitionClient.setRegion(Region.getRegion(Regions.US_EAST_2));
+        amazonRekognitionClient = new AmazonRekognitionClient(new AWSUtil());
+        amazonRekognitionClient.setRegion(Region.getRegion(Regions.US_EAST_1));
     }
+    public void findCelebrity() {
 
-    public List<String> findCelebrity() {
-        String photo = "https://mtv.mtvnimages.com/uri/mgid:ao:image:mtv.com:671939?quality=0.8&format=jpg";
-        ByteBuffer imageBytes = null;
+        String photo = "sansaGOT.png";
+        String bucket = "snappitbucket";
 
-        try {
-            InputStream inputStream = new FileInputStream(new File(photo));
-            imageBytes = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
-
-        } catch (Exception e) {
-            System.out.println("Failed to load file " + photo);
-            System.exit(1);
-        }
 
         RecognizeCelebritiesRequest request = new RecognizeCelebritiesRequest()
-                .withImage(new Image().withBytes(imageBytes));
+                .withImage(new Image()
+                        .withS3Object(new S3Object()
+                        .withName(photo).withBucket(bucket)));
 
-        System.out.println("Looking for celebrities in image " + photo + "\n");
-
-        RecognizeCelebritiesResult result = amazonRekognitionClient.recognizeCelebrities(request);
-
+        Log.e("Looking for celebs in ", photo + "\n");
+        RecognizeCelebritiesResult
+                result=amazonRekognitionClient.recognizeCelebrities(request);
         //Display recognized celebrity information
-        List<Celebrity> celebs = result.getCelebrityFaces();
-        System.out.println(celebs.size() + " celebrity(s) were recognized.\n");
-        List<String> metadata = new ArrayList<String>();
-
+        List<Celebrity> celebs=result.getCelebrityFaces();
+        Log.e(String.valueOf(celebs.size()), " celebrity(s) were recognized.\n");
         for (Celebrity celebrity: celebs) {
-            // Name
-            Log.i("Celebrity recognized: ", "celebrity.getName()");
-            metadata.add("Celebrity recognized: " + celebrity.getName());
-
-            // Id
-            System.out.println("Celebrity ID: " + celebrity.getId());
-            metadata.add("Celebrity ID: " + celebrity.getId());
-
-            // Position
-            BoundingBox boundingBox = celebrity.getFace().getBoundingBox();
-            System.out.println("position: " + boundingBox.getLeft().toString() + " " + boundingBox.getTop().toString());
-            metadata.add("position: " + boundingBox.getLeft().toString() + " " + boundingBox.getTop().toString());
-
-            // Extra info
-            System.out.println("Further information (if available):");
-            metadata.add("Further information (if available):");
-
+            Log.e("Celebrity recognized: ", celebrity.getName());
+            Log.e("Celebrity ID: ", celebrity.getId());
+            BoundingBox boundingBox=celebrity.getFace().getBoundingBox();
+            Log.e("position: ",
+                    boundingBox.getLeft().toString() + " " +
+                            boundingBox.getTop().toString());
+            Log.e("more info", "Further information (if available):");
             for (String url: celebrity.getUrls()){
-                System.out.println(url);
-                metadata.add(url);
+                Log.e(url, "url");
             }
-            System.out.println();
         }
-
-        System.out.println(result.getUnrecognizedFaces().size() + " face(s) were unrecognized.");
-        metadata.add(result.getUnrecognizedFaces().size() + " face(s) were unrecognized.");
-
-        return metadata;
     }
 }
