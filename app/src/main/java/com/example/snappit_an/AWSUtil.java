@@ -23,11 +23,11 @@ import java.util.List;
 
 public class AWSUtil implements AWSCredentials {
     public String getAWSAccessKeyId() {
-        return "AKIA3WZXY244KYGZSF4D";
+        return "";
     }
 
     public String getAWSSecretKey() {
-        return "9o1KhUBbjyX4PBX/eC14nmi3ZFU/HNKEh8DUMLCk";
+        return "";
     }
 }
 

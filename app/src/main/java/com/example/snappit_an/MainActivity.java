@@ -137,8 +137,10 @@ public class MainActivity extends AppCompatActivity {
         ImageButton button = (ImageButton) findViewById(R.id.fab2);
         button.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
             public final void onClick(View it) {
-                MainActivity.this.openGalleryForImage();
+                Intent myintent = new Intent(MainActivity.this, UploadActivity.class);
+                startActivity(myintent);
             }
+
         }));
 
 
@@ -152,22 +154,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    private final void openGalleryForImage() {
-        Intent intent = new Intent("android.intent.action.PICK");
-        intent.setType("image/*");
-        this.startActivityForResult(intent, this.REQUEST_CODE);
-
-    }
-//
-//
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == -1 && requestCode == this.REQUEST_CODE) {
-            Intent myintent = new Intent(MainActivity.this, UploadActivity.class);
-            startActivity(myintent);
-        }
-}
 
 
 }
