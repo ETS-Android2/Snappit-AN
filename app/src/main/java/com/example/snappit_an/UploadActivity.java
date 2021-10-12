@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,25 +56,25 @@ public class UploadActivity extends AppCompatActivity {
         amazonRekognitionClient.setRegion(Region.getRegion(Regions.US_EAST_1));
     }
 
+    private final void openGalleryForImage() {
+        Intent intent = new Intent("android.intent.action.PICK");
+        intent.setType("image/*");
+        this.startActivityForResult(intent, this.REQUEST_CODE);
+
+    }
+
     public void findCelebrity() {
 
-        Intent photo = new Intent("android.intent.action.PICK");
-        photo.setType("image/*");
+        String photo = "sansaGOT.png";
+        String bucket = "snappitbucket";
 
-        ByteBuffer imageBytes=null;
-
-        try (InputStream inputStream = new FileInputStream(new File(String.valueOf(photo)))) {
-            imageBytes = ByteBuffer.wrap(IOUtils.toByteArray(inputStream));
-        }
-        catch(Exception e)
-        {
-            System.out.println("Failed to load file " + photo);
-            System.exit(1);
-        }
 
         RecognizeCelebritiesRequest request = new RecognizeCelebritiesRequest()
                 .withImage(new Image()
-                        .withBytes(imageBytes));
+                        .withS3Object(new S3Object()
+                                .withName(photo).withBucket(bucket)));
+
+
 
         Log.e("Looking for celebs in ", photo + "\n");
         RecognizeCelebritiesResult
@@ -118,16 +120,36 @@ public class UploadActivity extends AppCompatActivity {
 
             getCredential();
             findCelebrity();
+            UploadActivity.this.openGalleryForImage();
 
         }
+
+
+//        run celebrity recogniser
+        try {
+            findCelebrity();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ImageButton button = (ImageButton) findViewById(R.id.goBackHome);
+        button.setOnClickListener((View.OnClickListener) (new View.OnClickListener() {
+            public final void onClick(View it) {
+                Intent myintent = new Intent(UploadActivity.this, MainActivity.class);
+                startActivity(myintent);
+            }
+        }));
     }
+
+
 
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-
         super.onActivityResult(requestCode, resultCode, data);
-        ((ImageView) this.findViewById(R.id.imageBox)).setImageURI(data != null ? data.getData() : null);
-
+        if (resultCode == -1 && requestCode == this.REQUEST_CODE) {
+            ((ImageView) this.findViewById(R.id.imageBox)).setImageURI(data != null ? data.getData() : null);
+        }
     }
+
 }
 
