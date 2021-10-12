@@ -1,0 +1,15 @@
+package com.example.snappit_an;
+
+import android.content.Intent;
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class SplashScreenActivity  extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
+        finish();
+    }
+}
