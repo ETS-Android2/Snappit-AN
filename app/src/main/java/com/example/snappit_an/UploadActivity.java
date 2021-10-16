@@ -2,6 +2,9 @@ package com.example.snappit_an;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -36,22 +39,32 @@ import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.IOUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class UploadActivity extends AppCompatActivity {
     AmazonRekognitionClient amazonRekognitionClient;
-
-
     private final int REQUEST_CODE = 100;
 
 
+    private static final String IMDB_TOKEN = "k_l1oxwwl6";
+    private static String stSummary;
+    private Activity activity;
 
-    public void getCredential(){
+    public void getCredential() {
         amazonRekognitionClient = new AmazonRekognitionClient(new AWSUtil());
         amazonRekognitionClient.setRegion(Region.getRegion(Regions.US_EAST_1));
     }
@@ -63,47 +76,7 @@ public class UploadActivity extends AppCompatActivity {
 
     }
 
-    public void findCelebrity() {
 
-        String photo = "sansaGOT.png";
-        String bucket = "snappitbucket";
-
-
-        RecognizeCelebritiesRequest request = new RecognizeCelebritiesRequest()
-                .withImage(new Image()
-                        .withS3Object(new S3Object()
-                                .withName(photo).withBucket(bucket)));
-
-
-
-        Log.e("Looking for celebs in ", photo + "\n");
-        RecognizeCelebritiesResult
-                result=amazonRekognitionClient.recognizeCelebrities(request);
-
-        //Display recognized celebrity information
-        List<Celebrity> celebs=result.getCelebrityFaces();
-
-        Log.e(String.valueOf(celebs.size()), " celebrity(s) were recognized.\n");
-
-        for (Celebrity celebrity: celebs) {
-            Log.e("Celebrity recognized: ", celebrity.getName());
-            //show in app
-            TextView textView = (TextView) findViewById(R.id.nameHere);
-            textView.append(celebrity.getName());
-
-            Log.e("Celebrity ID: ", celebrity.getId());
-            BoundingBox boundingBox=celebrity.getFace().getBoundingBox();
-            Log.e("position: ",
-                    boundingBox.getLeft().toString() + " " +
-                            boundingBox.getTop().toString());
-            Log.e("more info", "Further information (if available):");
-            for (String url: celebrity.getUrls()){
-                Log.e(url, "url");
-            }
-
-        }
-
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //fix networking operation
@@ -119,18 +92,10 @@ public class UploadActivity extends AppCompatActivity {
             setContentView(R.layout.upload_activity);
 
             getCredential();
-            findCelebrity();
             UploadActivity.this.openGalleryForImage();
 
         }
 
-
-//        run celebrity recogniser
-        try {
-            findCelebrity();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         ImageButton button = (ImageButton) findViewById(R.id.goBackHome);
         button.setOnClickListener((View.OnClickListener) (new View.OnClickListener() {
@@ -142,14 +107,110 @@ public class UploadActivity extends AppCompatActivity {
     }
 
 
-
-
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == -1 && requestCode == this.REQUEST_CODE) {
-            ((ImageView) this.findViewById(R.id.imageBox)).setImageURI(data != null ? data.getData() : null);
+
+            if (data != null) {
+                Uri uri = data.getData();
+                ImageView imageView = (ImageView) this.findViewById(R.id.imageBox);
+                imageView.setImageURI(uri);
+                Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+
+                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                    findCelebrity(ByteBuffer.wrap(baos.toByteArray()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
+
+    public void buttonClick() {
+        ImageView imageView = (ImageView) this.findViewById(R.id.imageBox);
+
+        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            findCelebrity(ByteBuffer.wrap(baos.toByteArray()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void findCelebrity(ByteBuffer imageBytes) {
+
+        if (imageBytes != null && imageBytes.hasArray()) {
+            RecognizeCelebritiesRequest request = new RecognizeCelebritiesRequest()
+                    .withImage(new Image().withBytes(imageBytes));
+
+
+            RecognizeCelebritiesResult result = amazonRekognitionClient.recognizeCelebrities(request);
+
+            //Display recognized celebrity information
+            List<Celebrity> celebs = result.getCelebrityFaces();
+
+            Log.e(String.valueOf(celebs.size()), " celebrity(s) were recognized.\n");
+
+            for (Celebrity celebrity : celebs) {
+
+                Log.i("Celebrity recognized: ", celebrity.getName());
+                //show in app
+                TextView textView = (TextView) findViewById(R.id.nameHere);
+                textView.append(celebrity.getName());
+
+                Log.i("Celebrity ID: ", celebrity.getId());
+                BoundingBox boundingBox = celebrity.getFace().getBoundingBox();
+                Log.i("position: ",
+                        boundingBox.getLeft().toString() + " " +
+                                boundingBox.getTop().toString());
+                Log.i("more info", "Further information (if available):");
+                for (String url : celebrity.getUrls()) {
+                    Log.i(url, "url");
+
+                    if (url.contains("imdb")) {
+                        String[] parts = url.split("/");
+                        String nameID = parts[parts.length - 1];
+                        requestIMDB(nameID);
+
+                    }
+                }
+            }
+        } else {
+            Toast.makeText(getApplicationContext(),
+                    "Sorry, file path is missing!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void requestIMDB(String nameID) {
+
+        if (nameID == null || nameID.isEmpty()) {
+            return;
+        }
+
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .build();
+        Request request = new Request.Builder()
+                .url("https://imdb-api.com/en/API/Name/" + IMDB_TOKEN + "/" + nameID)
+                .method("GET", null)
+                .build();
+        Response response = null;
+
+        try {
+            response = client.newCall(request).execute();
+
+            if (response != null && response.body() != null) {
+                Log.i("Response: ", response.body().string());
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 }
 
