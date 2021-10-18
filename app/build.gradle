@@ -40,6 +40,14 @@ dependencies {
     implementation 'com.amazonaws:aws-android-sdk-rekognition:2.28.0'
     //OKHTTP
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    //Gson
+    implementation 'com.google.code.gson:gson:2.8.7'
+
+
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

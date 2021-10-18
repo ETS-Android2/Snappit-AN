@@ -1,12 +1,10 @@
 package com.example.snappit_an;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
@@ -15,15 +13,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.rekognition.AmazonRekognitionClient;
@@ -32,23 +26,18 @@ import com.amazonaws.services.rekognition.model.Celebrity;
 import com.amazonaws.services.rekognition.model.Image;
 import com.amazonaws.services.rekognition.model.RecognizeCelebritiesRequest;
 import com.amazonaws.services.rekognition.model.RecognizeCelebritiesResult;
-import com.amazonaws.services.rekognition.model.S3Object;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.util.IOUtils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -61,8 +50,6 @@ public class UploadActivity extends AppCompatActivity {
 
 
     private static final String IMDB_TOKEN = "k_l1oxwwl6";
-    private static String stSummary;
-    private Activity activity;
 
     public void getCredential() {
         amazonRekognitionClient = new AmazonRekognitionClient(new AWSUtil());
@@ -75,6 +62,8 @@ public class UploadActivity extends AppCompatActivity {
         this.startActivityForResult(intent, this.REQUEST_CODE);
 
     }
+    List<IMDbActivity> movieList;
+    RecyclerView recyclerView;
 
 
     @Override
@@ -88,13 +77,13 @@ public class UploadActivity extends AppCompatActivity {
 
             //create page
             super.onCreate(savedInstanceState);
-
             setContentView(R.layout.upload_activity);
 
             getCredential();
             UploadActivity.this.openGalleryForImage();
 
         }
+
 
 
         ImageButton button = (ImageButton) findViewById(R.id.goBackHome);
@@ -120,27 +109,27 @@ public class UploadActivity extends AppCompatActivity {
                 try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                     findCelebrity(ByteBuffer.wrap(baos.toByteArray()));
-                } catch (IOException e) {
+                } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
             }
         }
     }
 
-    public void buttonClick() {
-        ImageView imageView = (ImageView) this.findViewById(R.id.imageBox);
+//    public void buttonClick() {
+//        ImageView imageView = (ImageView) this.findViewById(R.id.imageBox);
+//
+//        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+//
+//        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//            findCelebrity(ByteBuffer.wrap(baos.toByteArray()));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            findCelebrity(ByteBuffer.wrap(baos.toByteArray()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void findCelebrity(ByteBuffer imageBytes) {
+    public void findCelebrity(ByteBuffer imageBytes) throws IOException, JSONException {
 
         if (imageBytes != null && imageBytes.hasArray()) {
             RecognizeCelebritiesRequest request = new RecognizeCelebritiesRequest()
@@ -174,7 +163,6 @@ public class UploadActivity extends AppCompatActivity {
                         String[] parts = url.split("/");
                         String nameID = parts[parts.length - 1];
                         requestIMDB(nameID);
-
                     }
                 }
             }
@@ -184,8 +172,10 @@ public class UploadActivity extends AppCompatActivity {
         }
     }
 
-    public void requestIMDB(String nameID) {
 
+
+
+    public void requestIMDB(String nameID) throws IOException, JSONException {
         if (nameID == null || nameID.isEmpty()) {
             return;
         }
@@ -208,6 +198,21 @@ public class UploadActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        String jsonData = response.body().string();
+        JSONObject Jobject = new JSONObject(jsonData);
+        JSONArray Jarray = Jobject.getJSONArray("knownFor");
+
+        TextView mTextView = findViewById(R.id.movie_title);
+        ImageView img = findViewById(R.id.image_movie);
+
+        for (int i = 0; i < Jarray.length(); i++) {
+            JSONObject object = Jarray.getJSONObject(i);
+            mTextView.setText(object.getString("title"));
+//            img.setImageURI(Uri.parse(object.getString("image")));
+            Picasso.get().load(Uri.parse(object.getString("image"))).into(img);
+        }
+
 
     }
 
