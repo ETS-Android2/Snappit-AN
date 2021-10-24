@@ -1,5 +1,6 @@
 package com.example.snappit_an;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -7,9 +8,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,8 +69,6 @@ public class UploadActivity extends AppCompatActivity {
         this.startActivityForResult(intent, this.REQUEST_CODE);
 
     }
-    List<IMDbActivity> movieList;
-    RecyclerView recyclerView;
 
 
     @Override
@@ -175,7 +180,7 @@ public class UploadActivity extends AppCompatActivity {
 
 
 
-    public void requestIMDB(String nameID) throws IOException, JSONException {
+    public void requestIMDB (String nameID)  throws JSONException  {
         if (nameID == null || nameID.isEmpty()) {
             return;
         }
@@ -192,26 +197,42 @@ public class UploadActivity extends AppCompatActivity {
             response = client.newCall(request).execute();
 
             if (response != null && response.body() != null) {
-                Log.i("Response: ", response.body().string());
+
+                String jsonData = response.body().string();
+
+                JSONObject Jobject = new JSONObject(jsonData);
+                JSONArray Jarray = Jobject.getJSONArray("knownFor");
+
+//                TextView mTextView = findViewById(R.id.movie_title);
+//                ImageView img = findViewById(R.id.imageView);
+
+                LinearLayout moviesLayout = (LinearLayout)findViewById(R.id.linearLayout);
+
+
+
+                for (int i = 0; i < Jarray.length(); i++) {
+                    JSONObject object = Jarray.getJSONObject(i);
+                    LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View inflatedView = inflater.inflate(R.layout.image_item, null);
+                    ImageView imgView = (ImageView) inflatedView.findViewById(R.id.imageView);
+
+                    Picasso.get().load(Uri.parse(object.getString("image"))).into(imgView);
+                    moviesLayout.addView(imgView);
+
+//                    TextView textView = new TextView(getApplicationContext());
+//                    textView.setText(object.getString("title"));
+//                    moviesLayout.addView(textView);
+
+
+                }
 
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        String jsonData = response.body().string();
-        JSONObject Jobject = new JSONObject(jsonData);
-        JSONArray Jarray = Jobject.getJSONArray("knownFor");
 
-        TextView mTextView = findViewById(R.id.movie_title);
-        ImageView img = findViewById(R.id.image_movie);
 
-        for (int i = 0; i < Jarray.length(); i++) {
-            JSONObject object = Jarray.getJSONObject(i);
-            mTextView.setText(object.getString("title"));
-//            img.setImageURI(Uri.parse(object.getString("image")));
-            Picasso.get().load(Uri.parse(object.getString("image"))).into(img);
-        }
 
 
     }
