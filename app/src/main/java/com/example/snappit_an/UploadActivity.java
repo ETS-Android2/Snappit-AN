@@ -1,5 +1,6 @@
 package com.example.snappit_an;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -7,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +42,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,9 +54,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
+
 public class UploadActivity extends AppCompatActivity {
     AmazonRekognitionClient amazonRekognitionClient;
     private final int REQUEST_CODE = 100;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
 
     private static final String IMDB_TOKEN = "k_l1oxwwl6";
@@ -67,6 +73,12 @@ public class UploadActivity extends AppCompatActivity {
         Intent intent = new Intent("android.intent.action.PICK");
         intent.setType("image/*");
         this.startActivityForResult(intent, this.REQUEST_CODE);
+
+    }
+
+    private final void openCameraForImage() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        this.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
 
     }
 
@@ -85,7 +97,12 @@ public class UploadActivity extends AppCompatActivity {
             setContentView(R.layout.upload_activity);
 
             getCredential();
-            UploadActivity.this.openGalleryForImage();
+
+                UploadActivity.this.openGalleryForImage();
+
+
+                UploadActivity.this.openCameraForImage();
+
 
         }
 
@@ -113,6 +130,25 @@ public class UploadActivity extends AppCompatActivity {
 
                 try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                    findCelebrity(ByteBuffer.wrap(baos.toByteArray()));
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (requestCode == this.REQUEST_IMAGE_CAPTURE && resultCode == 1) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            if (data != null) {
+                Uri uri = data.getData();
+                ImageView imageView = (ImageView) this.findViewById(R.id.imageBox);
+                imageView.setImageURI(uri);
+                imageBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+
+                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                     findCelebrity(ByteBuffer.wrap(baos.toByteArray()));
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
@@ -194,13 +230,18 @@ public class UploadActivity extends AppCompatActivity {
         Response response = null;
 
         try {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             response = client.newCall(request).execute();
 
             if (response != null && response.body() != null) {
 
                 String jsonData = response.body().string();
-
                 JSONObject Jobject = new JSONObject(jsonData);
+
+                TextView mTextView = (TextView) findViewById(R.id.movie_title);
+                mTextView.setText(Jobject.getString("summary"));
+
+
                 JSONArray Jarray = Jobject.getJSONArray("knownFor");
 
 //                TextView mTextView = findViewById(R.id.movie_title);
@@ -212,7 +253,7 @@ public class UploadActivity extends AppCompatActivity {
 
                 for (int i = 0; i < Jarray.length(); i++) {
                     JSONObject object = Jarray.getJSONObject(i);
-                    LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
                     View inflatedView = inflater.inflate(R.layout.image_item, null);
                     ImageView imgView = (ImageView) inflatedView.findViewById(R.id.imageView);
 
@@ -220,7 +261,7 @@ public class UploadActivity extends AppCompatActivity {
                     moviesLayout.addView(imgView);
 
 //                    TextView textView = new TextView(getApplicationContext());
-//                    textView.setText(object.getString("title"));
+//                    textView.setText(object.getString("summary"));
 //                    moviesLayout.addView(textView);
 
 
