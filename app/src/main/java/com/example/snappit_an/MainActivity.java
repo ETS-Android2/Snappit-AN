@@ -6,8 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Camera;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -32,6 +36,9 @@ import com.amazonaws.util.IOUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONException;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -43,8 +50,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     // Camera activity request codes
     private final int REQUEST_CODE = 100;
-    private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private Camera camera;
     private Uri fileUri;
+    private static final int CAMERA_REQUEST = 1888;
     private HashMap _$_findViewCache;
 
 
@@ -57,45 +66,7 @@ public class MainActivity extends AppCompatActivity {
         amazonRekognitionClient.setRegion(Region.getRegion(Regions.US_EAST_1));
 
     }
-//    public void findCelebrity() {
-//
-//        String photo = "sansaGOT.png";
-//        String bucket = "snappitbucket";
-//
-//
-//        RecognizeCelebritiesRequest request = new RecognizeCelebritiesRequest()
-//                .withImage(new Image()
-//                        .withS3Object(new S3Object()
-//                                .withName(photo).withBucket(bucket)));
-//
-//        Log.e("Looking for celebs in ", photo + "\n");
-//        RecognizeCelebritiesResult
-//                result=amazonRekognitionClient.recognizeCelebrities(request);
-//
-//        //Display recognized celebrity information
-//        List<Celebrity> celebs=result.getCelebrityFaces();
-//
-//        Log.e(String.valueOf(celebs.size()), " celebrity(s) were recognized.\n");
-//
-//        for (Celebrity celebrity: celebs) {
-//            Log.e("Celebrity recognized: ", celebrity.getName());
-//            //show in app
-//            TextView textView = (TextView) findViewById(R.id.connectionEst);
-//            textView.append(celebrity.getName());
-//
-//            Log.e("Celebrity ID: ", celebrity.getId());
-//            BoundingBox boundingBox=celebrity.getFace().getBoundingBox();
-//            Log.e("position: ",
-//                    boundingBox.getLeft().toString() + " " +
-//                            boundingBox.getTop().toString());
-//            Log.e("more info", "Further information (if available):");
-//            for (String url: celebrity.getUrls()){
-//                Log.e(url, "url");
-//            }
-//
-//        }
-//
-//    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,20 +91,20 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Opening Camera . . .", Snackbar.LENGTH_LONG)
-                        .setAction("Open", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-                                startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
-                            }
-                        }).show();
+//                File destination = new File(Environment.getExternalStorageDirectory(),
+//                        System.currentTimeMillis() + ".jpg");
+//                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+//                Intent intent = new Intent(MainActivity.this, UploadActivity.class);
+//                intent.putExtra("MyImagePath", destination.getAbsoluteFile());
+//                startActivity(intent);
             }
+
         });
 
+
         ImageButton button = (ImageButton) findViewById(R.id.fab2);
-        button.setOnClickListener((View.OnClickListener)(new View.OnClickListener() {
+        button.setOnClickListener((View.OnClickListener) (new View.OnClickListener() {
             public final void onClick(View it) {
                 Intent myintent = new Intent(MainActivity.this, UploadActivity.class);
                 startActivity(myintent);
@@ -142,16 +113,6 @@ public class MainActivity extends AppCompatActivity {
         }));
 
 
-
-        //run celebrity recogniser
-//        try {
-//            findCelebrity();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
     }
-
-
 
 }
