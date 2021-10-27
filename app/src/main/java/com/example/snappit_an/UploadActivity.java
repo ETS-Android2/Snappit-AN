@@ -3,6 +3,7 @@ package com.example.snappit_an;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -60,6 +61,9 @@ public class UploadActivity extends AppCompatActivity {
     AmazonRekognitionClient amazonRekognitionClient;
     private final int REQUEST_CODE = 100;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final String PREFERENCES_FILE = null;
+    private static final String PREF_USER_FIRST_TIME = null;
+
 
 
     private static final String IMDB_TOKEN = "k_l1oxwwl6";
@@ -95,13 +99,13 @@ public class UploadActivity extends AppCompatActivity {
             //create page
             super.onCreate(savedInstanceState);
             setContentView(R.layout.upload_activity);
+            Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                    .getBoolean("isFirstRun", true);
+
 
             getCredential();
 
                 UploadActivity.this.openGalleryForImage();
-
-
-                UploadActivity.this.openCameraForImage();
 
 
         }
@@ -259,10 +263,6 @@ public class UploadActivity extends AppCompatActivity {
 
                     Picasso.get().load(Uri.parse(object.getString("image"))).into(imgView);
                     moviesLayout.addView(imgView);
-
-//                    TextView textView = new TextView(getApplicationContext());
-//                    textView.setText(object.getString("summary"));
-//                    moviesLayout.addView(textView);
 
 
                 }

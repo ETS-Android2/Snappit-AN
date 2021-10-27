@@ -11,4 +11,8 @@ public class Util {
         final Bitmap bitmap = BitmapFactory.decodeFile(path, options);
         imageView.setImageBitmap(bitmap);
     }
+
+    public static boolean readSharedSetting(Onboarding onboarding, String prefUserFirstTime, String aTrue) {
+        return false;
+    }
 }
