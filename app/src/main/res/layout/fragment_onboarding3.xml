@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".Onboarding"
     android:background="@color/dark_blue">
 
     <TextView
@@ -89,6 +90,7 @@
 
     <ImageButton
         android:id="@+id/backHome"
+        android:onClick="buttonClick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@color/transparent"

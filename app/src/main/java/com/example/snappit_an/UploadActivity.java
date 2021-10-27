@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -99,9 +101,13 @@ public class UploadActivity extends AppCompatActivity {
             //create page
             super.onCreate(savedInstanceState);
             setContentView(R.layout.upload_activity);
-            Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
-                    .getBoolean("isFirstRun", true);
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            }
+            View decorView = getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+            decorView.setSystemUiVisibility(uiOptions);
 
             getCredential();
 
@@ -119,6 +125,18 @@ public class UploadActivity extends AppCompatActivity {
                 startActivity(myintent);
             }
         }));
+
+        hideSystemUI();
+    }
+
+    public void hideSystemUI() {
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
 
@@ -242,25 +260,29 @@ public class UploadActivity extends AppCompatActivity {
                 String jsonData = response.body().string();
                 JSONObject Jobject = new JSONObject(jsonData);
 
-                TextView mTextView = (TextView) findViewById(R.id.movie_title);
-                mTextView.setText(Jobject.getString("summary"));
+                TextView mTextView = (TextView) findViewById(R.id.awardsText);
+                mTextView.setText(Jobject.getString("role"));
+
+                TextView summaryTextView = (TextView) findViewById(R.id.summaryText);
+                summaryTextView.setText(Jobject.getString("summary"));
+
+                TextView awardsTextView = (TextView) findViewById(R.id.movie_title);
+                awardsTextView.setText(Jobject.getString("awards"));
+
+                ImageView actorView = (ImageView) findViewById(R.id.actorImage);
+                Picasso.get().load(Uri.parse(Jobject.getString("image"))).into(actorView);
 
 
                 JSONArray Jarray = Jobject.getJSONArray("knownFor");
-
-//                TextView mTextView = findViewById(R.id.movie_title);
-//                ImageView img = findViewById(R.id.imageView);
-
                 LinearLayout moviesLayout = (LinearLayout)findViewById(R.id.linearLayout);
-
 
 
                 for (int i = 0; i < Jarray.length(); i++) {
                     JSONObject object = Jarray.getJSONObject(i);
 
                     View inflatedView = inflater.inflate(R.layout.image_item, null);
-                    ImageView imgView = (ImageView) inflatedView.findViewById(R.id.imageView);
 
+                    ImageView imgView = (ImageView) inflatedView.findViewById(R.id.imageView);
                     Picasso.get().load(Uri.parse(object.getString("image"))).into(imgView);
                     moviesLayout.addView(imgView);
 

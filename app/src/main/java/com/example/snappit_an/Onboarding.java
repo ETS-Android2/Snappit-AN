@@ -34,23 +34,25 @@ public class Onboarding extends AppCompatActivity {
     private ViewPager viewPager;
     private ScreenSlidePageAdapter pagerAdapter;
 
-    public static String readSharedSetting(Context ctx, String settingName, String defaultValue) {
-        SharedPreferences sharedPref = ctx.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-        return sharedPref.getString(settingName, defaultValue);
-    }
+    private void checkFirstOpen(){
+        Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                .getBoolean("isFirstRun", true);
 
-    public static void saveSharedSetting(Context ctx, String settingName, String settingValue) {
-        SharedPreferences sharedPref = ctx.getSharedPreferences(PREFERENCES_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(settingName, settingValue);
-        editor.apply();
+        if (!isFirstRun) {
+            Intent intent = new Intent(Onboarding.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+
+        }
+
+        getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("isFirstRun",
+                false).apply();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
-
+        checkFirstOpen();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.onboarding);
 
@@ -78,18 +80,16 @@ public class Onboarding extends AppCompatActivity {
         lottieAnimationView.cancelAnimation();
         hideSystemUI();
 
-//        ImageButton mFinishBtn = (ImageButton) findViewById(R.id.backHome);
-//        mFinishBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                finish();
-//                //  update 1st time pref
-//                saveSharedSetting(Onboarding.this, Onboarding.PREF_USER_FIRST_TIME, "false");
-//
-//            }
-//        });
 
+    }
+
+    public void buttonClick(View v) {
+        switch(v.getId()) {
+            case R.id.backHome:
+                Intent myintent = new Intent(Onboarding.this, MainActivity.class);
+                startActivity(myintent);
+                break;
+        }
     }
 
     public void hideSystemUI() {
