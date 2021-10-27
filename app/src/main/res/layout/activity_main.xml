@@ -5,20 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/bg_blueswirl"
+    android:background="@color/background_blue"
     tools:context=".MainActivity">
 
     <ImageView
-        android:layout_width="293dp"
-        android:layout_height="81dp"
-        android:layout_marginTop="32dp"
+        android:id="@+id/imageView5"
+        android:layout_width="162dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="48dp"
         android:src="@drawable/bg_header"
         app:layout_constraintBottom_toTopOf="@+id/fab"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.576"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.58">
+        app:layout_constraintVertical_bias="0.235">
 
     </ImageView>
 
@@ -34,48 +35,73 @@
 
     </TextView>
 
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="348dp"
+        android:layout_height="337dp"
+        android:layout_marginStart="164dp"
+        android:layout_marginTop="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView5"
+        app:srcCompat="@drawable/camera" />
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="371dp"
+        android:layout_height="330dp"
+        android:layout_marginTop="68dp"
+        android:layout_marginEnd="168dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fab"
+        app:srcCompat="@drawable/image_card" />
+
     <ImageButton
         android:id="@+id/fab"
-        android:layout_width="187dp"
-        android:layout_height="177dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="164dp"
+        android:layout_width="194dp"
+        android:layout_height="202dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="36dp"
         android:background="@color/transparent"
-        android:padding="1dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/camera_icon"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></ImageButton>
+        app:layout_constraintTop_toTopOf="@+id/imageView8"
+        app:srcCompat="@drawable/yellow_circle" />
 
     <ImageButton
         android:id="@+id/fab2"
-        android:layout_width="196dp"
-        android:layout_height="188dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="152dp"
+        android:layout_width="199dp"
+        android:layout_height="210dp"
+        android:layout_marginEnd="64dp"
         android:background="@color/transparent"
-        android:padding="1dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/upload_button"
-        app:layout_constraintBottom_toBottomOf="@+id/connectionEst"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fab"
-        app:layout_constraintVertical_bias="0.28">
+        app:layout_constraintTop_toBottomOf="@+id/imageView8"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/pink_circle_big" />
 
-    </ImageButton>
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Camera."
+        android:textColor="@color/white"
+        android:fontFamily="@font/poppins_extra_bold"
+        android:textSize="11pt"
+        app:layout_constraintBottom_toBottomOf="@+id/fab"
+        app:layout_constraintEnd_toEndOf="@+id/fab"
+        app:layout_constraintStart_toStartOf="@+id/fab"
+        app:layout_constraintTop_toTopOf="@+id/fab" />
 
-
-    <!--    <ImageView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:src="@drawable/bg_steve"-->
-<!--        app:layout_constraintBottom_toBottomOf="@+id/connectionEst"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/fab2"-->
-<!--        app:layout_constraintVertical_bias="1.0"></ImageView>-->
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gallery."
+        android:textColor="@color/white"
+        android:textSize="11pt"
+        android:fontFamily="@font/poppins_extra_bold"
+        app:layout_constraintBottom_toBottomOf="@+id/fab2"
+        app:layout_constraintEnd_toEndOf="@+id/fab2"
+        app:layout_constraintStart_toStartOf="@+id/fab2"
+        app:layout_constraintTop_toTopOf="@+id/fab2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
