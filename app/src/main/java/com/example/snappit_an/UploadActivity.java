@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -26,10 +27,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.rekognition.AmazonRekognitionClient;
@@ -48,6 +51,9 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -61,11 +67,10 @@ import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 public class UploadActivity extends AppCompatActivity {
     AmazonRekognitionClient amazonRekognitionClient;
-    private final int REQUEST_CODE = 100;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final String PREFERENCES_FILE = null;
-    private static final String PREF_USER_FIRST_TIME = null;
-
+    private final int GALLERY_REQ = 100;
+    private final int TAKE_PHOTO_REQ = 200;
+    String file_path = Environment.getExternalStorageDirectory()
+            + "/recent.jpg";//Here recent.jpg is your image name which will going to take
 
 
     private static final String IMDB_TOKEN = "k_l1oxwwl6";
@@ -78,14 +83,34 @@ public class UploadActivity extends AppCompatActivity {
     private final void openGalleryForImage() {
         Intent intent = new Intent("android.intent.action.PICK");
         intent.setType("image/*");
-        this.startActivityForResult(intent, this.REQUEST_CODE);
-
+        this.startActivityForResult(intent, this.GALLERY_REQ);
     }
 
     private final void openCameraForImage() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        this.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        this.startActivityForResult(intent, this.TAKE_PHOTO_REQ);
+    }
 
+    public void showLoadingDialog() {
+        Loader fragment = (Loader) getSupportFragmentManager().findFragmentByTag(Loader.FRAGMENT_TAG);
+        if (fragment == null) {
+            fragment = new Loader();
+            fragment.setCancelable(false);
+            getSupportFragmentManager().beginTransaction()
+                    .add(fragment, Loader.FRAGMENT_TAG)
+                    .commitAllowingStateLoss();
+
+            // fragment.show(getSupportFragmentManager().beginTransaction(), LoadingDialogFragment.FRAGMENT_TAG);
+        }
+
+    }
+
+    public void hideLoadingDialog() {
+        Loader fragment = (Loader) getSupportFragmentManager().findFragmentByTag(Loader.FRAGMENT_TAG);
+        if (fragment != null) {
+            // fragment.dismissAllowingStateLoss();
+            getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
+        }
     }
 
 
@@ -111,11 +136,15 @@ public class UploadActivity extends AppCompatActivity {
 
             getCredential();
 
-                UploadActivity.this.openGalleryForImage();
+            String action = getIntent().getStringExtra("ACTION");
 
+            if (action != null && action.equals("CAMERA")) {
+                openCameraForImage();
+            } else {
+                openGalleryForImage();
+            }
 
         }
-
 
 
         ImageButton button = (ImageButton) findViewById(R.id.goBackHome);
@@ -128,6 +157,7 @@ public class UploadActivity extends AppCompatActivity {
 
         hideSystemUI();
     }
+
 
     public void hideSystemUI() {
         getWindow().getDecorView().setSystemUiVisibility(
@@ -142,9 +172,12 @@ public class UploadActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == -1 && requestCode == this.REQUEST_CODE) {
 
-            if (data != null) {
+
+        if (resultCode == RESULT_OK && data != null) {
+
+
+            if (requestCode == GALLERY_REQ) {
                 Uri uri = data.getData();
                 ImageView imageView = (ImageView) this.findViewById(R.id.imageBox);
                 imageView.setImageURI(uri);
@@ -156,41 +189,25 @@ public class UploadActivity extends AppCompatActivity {
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
-            }
-        }
 
-        if (requestCode == this.REQUEST_IMAGE_CAPTURE && resultCode == 1) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            } else if (requestCode == TAKE_PHOTO_REQ) {
 
-            if (data != null) {
-                Uri uri = data.getData();
+
+                Bitmap srcBmp = (Bitmap) data.getExtras().get("data");
                 ImageView imageView = (ImageView) this.findViewById(R.id.imageBox);
-                imageView.setImageURI(uri);
-                imageBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                imageView.setImageBitmap(srcBmp);
 
                 try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                    srcBmp.compress(Bitmap.CompressFormat.JPEG, 50, baos);
                     findCelebrity(ByteBuffer.wrap(baos.toByteArray()));
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
             }
+
         }
     }
 
-//    public void buttonClick() {
-//        ImageView imageView = (ImageView) this.findViewById(R.id.imageBox);
-//
-//        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-//
-//        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-//            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//            findCelebrity(ByteBuffer.wrap(baos.toByteArray()));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public void findCelebrity(ByteBuffer imageBytes) throws IOException, JSONException {
 
@@ -236,9 +253,7 @@ public class UploadActivity extends AppCompatActivity {
     }
 
 
-
-
-    public void requestIMDB (String nameID)  throws JSONException  {
+    public void requestIMDB(String nameID) throws JSONException {
         if (nameID == null || nameID.isEmpty()) {
             return;
         }
@@ -274,10 +289,11 @@ public class UploadActivity extends AppCompatActivity {
 
 
                 JSONArray Jarray = Jobject.getJSONArray("knownFor");
-                LinearLayout moviesLayout = (LinearLayout)findViewById(R.id.linearLayout);
+                LinearLayout moviesLayout = (LinearLayout) findViewById(R.id.linearLayout);
 
 
                 for (int i = 0; i < Jarray.length(); i++) {
+
                     JSONObject object = Jarray.getJSONObject(i);
 
                     View inflatedView = inflater.inflate(R.layout.image_item, null);
@@ -286,16 +302,12 @@ public class UploadActivity extends AppCompatActivity {
                     Picasso.get().load(Uri.parse(object.getString("image"))).into(imgView);
                     moviesLayout.addView(imgView);
 
-
                 }
 
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
 
 
     }

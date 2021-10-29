@@ -53,22 +53,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    // Camera activity request codes
-    private final int REQUEST_CODE = 100;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-    private Camera camera;
-    private Uri fileUri;
-    private static final int CAMERA_REQUEST = 1888;
-    private HashMap _$_findViewCache;
-    SharedPreferences onBoardingScreen;
-
-
 
     AmazonRekognitionClient amazonRekognitionClient;
 
 
-
-    public void getCredential(){
+    public void getCredential() {
         amazonRekognitionClient = new AmazonRekognitionClient(new AWSUtil());
         amazonRekognitionClient.setRegion(Region.getRegion(Regions.US_EAST_1));
 
@@ -84,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                     .permitAll().build();
             StrictMode.setThreadPolicy(policy);
 
-      //create page
+            //create page
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
 
@@ -99,34 +88,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        //fab buttons
+        //camera onclick
         ImageButton fab = (ImageButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                File destination = new File(Environment.getExternalStorageDirectory(),
-//                        System.currentTimeMillis() + ".jpg");
+
 //                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 //                startActivityForResult(cameraIntent, CAMERA_REQUEST);
-//                Intent intent = new Intent(MainActivity.this, UploadActivity.class);
-//                intent.putExtra("MyImagePath", destination.getAbsoluteFile());
-//                startActivity(intent);
+
+                Intent intent = new Intent(MainActivity.this, UploadActivity.class);
+                intent.putExtra("ACTION", "CAMERA");
+                startActivity(intent);
+
             }
 
         });
 
-
+        //gallery onclick
         ImageButton button = (ImageButton) findViewById(R.id.fab2);
         button.setOnClickListener((View.OnClickListener) (new View.OnClickListener() {
             public final void onClick(View it) {
-                Intent myintent = new Intent(MainActivity.this, UploadActivity.class);
-                startActivity(myintent);
+                Intent myGalleryIntent = new Intent(MainActivity.this, UploadActivity.class);
+                startActivity(myGalleryIntent);
             }
 
         }));
 
         hideSystemUI();
     }
+
 
     public void hideSystemUI() {
         getWindow().getDecorView().setSystemUiVisibility(
@@ -137,5 +128,7 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
+
+
 
 }

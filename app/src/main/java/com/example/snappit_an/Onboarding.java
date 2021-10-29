@@ -25,8 +25,6 @@ import com.airbnb.lottie.utils.Utils;
 
 public class Onboarding extends AppCompatActivity {
 
-    private static final String PREFERENCES_FILE = null;
-    private static final String PREF_USER_FIRST_TIME = null;
     ImageView logo, appname, splashImg;
     LottieAnimationView lottieAnimationView;
 

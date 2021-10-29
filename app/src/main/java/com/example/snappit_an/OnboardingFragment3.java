@@ -14,8 +14,6 @@ import androidx.fragment.app.Fragment;
 
 public class OnboardingFragment3 extends Fragment {
 
-    Intent intent;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
