@@ -66,7 +66,7 @@ import okhttp3.Response;
 
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
-public class UploadActivity extends AppCompatActivity {
+public class UploadActivity extends AppCompatActivity implements View.OnClickListener {
     AmazonRekognitionClient amazonRekognitionClient;
     private final int GALLERY_REQ = 100;
     private final int TAKE_PHOTO_REQ = 200;
@@ -155,7 +155,6 @@ public class UploadActivity extends AppCompatActivity {
         ImageButton button = (ImageButton) findViewById(R.id.goBackHome);
         button.setOnClickListener((View.OnClickListener) (new View.OnClickListener() {
             public final void onClick(View it) {
-
                 Intent myintent = new Intent(UploadActivity.this, MainActivity.class);
                 startActivity(myintent);
             }
@@ -212,7 +211,7 @@ public class UploadActivity extends AppCompatActivity {
 
             Log.e(String.valueOf(celebs.size()), " celebrity(s) were recognized.\n");
 
-            for (Celebrity celebrity : celebs) {
+            for ( Celebrity celebrity : celebs ) {
 
                 Log.i("Celebrity recognized: ", celebrity.getName());
                 //show in app
@@ -227,7 +226,7 @@ public class UploadActivity extends AppCompatActivity {
                 Log.i("more info", "Further information (if available):");
 
                 hideLoadingDialog();
-                for (String url : celebrity.getUrls()) {
+                for ( String url : celebrity.getUrls() ) {
                     Log.i(url, "url");
 
                     if (url.contains("imdb")) {
@@ -243,6 +242,13 @@ public class UploadActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onClick(View view) {
+        Intent movieInfoIntent = new Intent(UploadActivity.this, MovieInfoActivity.class);
+        String id = view.getTag().toString();
+        movieInfoIntent.putExtra("id", id);
+        startActivity(movieInfoIntent);
+    }
 
     public void requestIMDB(String nameID) throws JSONException {
         if (nameID == null || nameID.isEmpty()) {
@@ -283,25 +289,18 @@ public class UploadActivity extends AppCompatActivity {
                 LinearLayout moviesLayout = (LinearLayout) findViewById(R.id.linearLayout);
 
 
-                for (int i = 0; i < Jarray.length(); i++) {
-                    JSONObject object = Jarray.getJSONObject(i);
+                for ( int i = 0; i < Jarray.length(); i++ ) {
+                    JSONObject jsonObject = Jarray.getJSONObject(i);
 
                     View inflatedView = inflater.inflate(R.layout.image_item, null);
 
                     ImageView imgView = (ImageView) inflatedView.findViewById(R.id.imageView);
-                    Picasso.get().load(Uri.parse(object.getString("image"))).into(imgView);
+                    Picasso.get().load(Uri.parse(jsonObject.getString("image"))).into(imgView);
+                    imgView.setTag(jsonObject.getString("id"));
+                    imgView.setOnClickListener(this);
                     moviesLayout.addView(imgView);
 
-                    TextView movieId = (TextView) findViewById(R.id.movieID);
-                    movieId.setText(Jobject.getString("id"));
-
-
-//                    for(null != imgView) {
-//
-//                    }
                 }
-
-
             }
         } catch (IOException e) {
             e.printStackTrace();

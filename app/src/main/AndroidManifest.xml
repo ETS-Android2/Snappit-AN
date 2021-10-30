@@ -24,6 +24,7 @@
         <activity android:name=".MainActivity">
         </activity>
         <activity android:name=".UploadActivity" />
+        <activity android:name=".MovieInfoActivity" />
         <activity android:name=".Onboarding">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
