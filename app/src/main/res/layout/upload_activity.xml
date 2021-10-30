@@ -8,6 +8,22 @@
     android:background="@color/background_blue"
     tools:context=".MainActivity">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loader_ani"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/scrollView2"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/simple"
+        android:visibility="gone"
+        app:lottie_repeatMode="restart">
+
+    </com.airbnb.lottie.LottieAnimationView>
 
         <ImageButton
             android:id="@+id/goBackHome"
@@ -26,6 +42,7 @@
         </ImageButton>
 
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -34,101 +51,100 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/actorImage"
-            android:layout_width="match_parent"
-            android:layout_height="471dp"
-            android:elevation="-1dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars" />
-
-
-
-        <TextView
-            android:id="@+id/nameHere"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="304dp"
-            android:elevation="2dp"
-            android:fontFamily="@font/poppins_extra_bold"
-            android:text=""
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="12pt"
-            app:layout_constraintBottom_toTopOf="@+id/awardsText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
-
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
-            android:fontFamily="@font/poppins_extra_bold"
-            android:paddingBottom="20px"
-            android:text="Known For:"
-            android:textColor="@color/black"
-            android:textSize="8pt"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.107"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/actorImage" />
-
-        <HorizontalScrollView
-            android:id="@+id/parentLayout"
-            android:layout_width="match_parent"
-            android:layout_height="600px"
-            android:isScrollContainer="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3"
-            app:layout_constraintVertical_bias="0.0">
-
-            <LinearLayout
-                android:id="@+id/linearLayout"
+            <ImageView
+                android:id="@+id/actorImage"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"></LinearLayout>
+                android:layout_height="471dp"
+                android:elevation="-1dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/avatars" />
 
-        </HorizontalScrollView>
 
-        <TextView
-            android:id="@+id/movie_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="68dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/poppins_regular"
-            android:paddingLeft="5px"
-            android:text="TextView"
-            android:textColor="@color/black"
-            android:textSize="5pt"
-            android:paddingRight="50px"
-            app:layout_constraintBottom_toTopOf="@+id/textView3"
-            app:layout_constraintStart_toEndOf="@+id/imageView6"
-            app:layout_constraintTop_toBottomOf="@+id/awardsText"
-            app:layout_constraintVertical_bias="0.0" />
+            <TextView
+                android:id="@+id/nameHere"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="304dp"
+                android:elevation="2dp"
+                android:fontFamily="@font/poppins_extra_bold"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="12pt"
+                app:layout_constraintBottom_toTopOf="@+id/awardsText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
-        <TextView
-            android:id="@+id/awardsText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="36dp"
-            android:layout_marginBottom="28dp"
-            android:fontFamily="@font/poppins_regular"
-            android:text="TextView"
-            android:textColor="@color/black"
-            android:textSize="7pt"
-            app:layout_constraintBottom_toBottomOf="@+id/actorImage"
-            app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:fontFamily="@font/poppins_extra_bold"
+                android:paddingBottom="20px"
+                android:text="Known For:"
+                android:textColor="@color/black"
+                android:textSize="8pt"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.107"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/actorImage" />
+
+            <HorizontalScrollView
+                android:id="@+id/parentLayout"
+                android:layout_width="match_parent"
+                android:layout_height="600px"
+                android:isScrollContainer="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView3"
+                app:layout_constraintVertical_bias="0.0">
+
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"></LinearLayout>
+
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/movie_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="68dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/poppins_regular"
+                android:paddingLeft="5px"
+                android:paddingRight="50px"
+                android:text="TextView"
+                android:textColor="@color/black"
+                android:textSize="5pt"
+                app:layout_constraintBottom_toTopOf="@+id/textView3"
+                app:layout_constraintStart_toEndOf="@+id/imageView6"
+                app:layout_constraintTop_toBottomOf="@+id/awardsText"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/awardsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginBottom="28dp"
+                android:fontFamily="@font/poppins_regular"
+                android:text="TextView"
+                android:textColor="@color/black"
+                android:textSize="7pt"
+                app:layout_constraintBottom_toBottomOf="@+id/actorImage"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
                 android:id="@+id/imageView4"
@@ -144,53 +160,61 @@
                 app:srcCompat="@drawable/faded_rectangle" />
 
             <ImageView
-            android:id="@+id/imageBox"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:layout_editor_absoluteX="307dp"
-            tools:layout_editor_absoluteY="31dp"
-            tools:srcCompat="@tools:sample/avatars"
-            tools:ignore="MissingConstraints" />
+                android:id="@+id/imageBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteX="307dp"
+                tools:layout_editor_absoluteY="31dp"
+                tools:srcCompat="@tools:sample/avatars" />
 
-        <ImageView
-            android:id="@+id/imageView6"
-            android:layout_width="23dp"
-            android:layout_height="29dp"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="4dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/awardsText"
-            app:srcCompat="@drawable/awards" />
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="23dp"
+                android:layout_height="29dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/awardsText"
+                app:srcCompat="@drawable/awards" />
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/poppins_extra_bold"
-            android:paddingTop="60px"
-            android:text="About"
-            android:textColor="@color/black"
-            android:textSize="8pt"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.102"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/parentLayout" />
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_extra_bold"
+                android:paddingTop="60px"
+                android:text="About"
+                android:textColor="@color/black"
+                android:textSize="8pt"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.102"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/parentLayout" />
 
-        <TextView
-            android:id="@+id/summaryText"
-            android:layout_width="match_parent"
-            android:paddingRight="90px"
-            android:paddingBottom="90px"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="44dp"
-            android:fontFamily="@font/poppins_regular"
-            android:paddingTop="10px"
-            android:text="summary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView8">
+            <TextView
+                android:id="@+id/summaryText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="44dp"
+                android:fontFamily="@font/poppins_regular"
+                android:paddingTop="10px"
+                android:paddingRight="90px"
+                android:paddingBottom="90px"
+                android:text="summary"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView8">
 
-        </TextView>
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/movieID"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints"
+                android:visibility="invisible">
+            </TextView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

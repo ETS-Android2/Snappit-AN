@@ -93,10 +93,6 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-//                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//                startActivityForResult(cameraIntent, CAMERA_REQUEST);
-
                 Intent intent = new Intent(MainActivity.this, UploadActivity.class);
                 intent.putExtra("ACTION", "CAMERA");
                 startActivity(intent);

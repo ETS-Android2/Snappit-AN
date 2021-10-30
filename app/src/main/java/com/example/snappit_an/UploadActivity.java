@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -69,8 +70,6 @@ public class UploadActivity extends AppCompatActivity {
     AmazonRekognitionClient amazonRekognitionClient;
     private final int GALLERY_REQ = 100;
     private final int TAKE_PHOTO_REQ = 200;
-    String file_path = Environment.getExternalStorageDirectory()
-            + "/recent.jpg";//Here recent.jpg is your image name which will going to take
 
 
     private static final String IMDB_TOKEN = "k_l1oxwwl6";
@@ -80,13 +79,14 @@ public class UploadActivity extends AppCompatActivity {
         amazonRekognitionClient.setRegion(Region.getRegion(Regions.US_EAST_1));
     }
 
-    private final void openGalleryForImage() {
+    private void openGalleryForImage() {
         Intent intent = new Intent("android.intent.action.PICK");
         intent.setType("image/*");
+
         this.startActivityForResult(intent, this.GALLERY_REQ);
     }
 
-    private final void openCameraForImage() {
+    private void openCameraForImage() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         this.startActivityForResult(intent, this.TAKE_PHOTO_REQ);
     }
@@ -100,7 +100,7 @@ public class UploadActivity extends AppCompatActivity {
                     .add(fragment, Loader.FRAGMENT_TAG)
                     .commitAllowingStateLoss();
 
-            // fragment.show(getSupportFragmentManager().beginTransaction(), LoadingDialogFragment.FRAGMENT_TAG);
+//             fragment.show(getSupportFragmentManager().beginTransaction(), Loader.FRAGMENT_TAG);
         }
 
     }
@@ -108,11 +108,16 @@ public class UploadActivity extends AppCompatActivity {
     public void hideLoadingDialog() {
         Loader fragment = (Loader) getSupportFragmentManager().findFragmentByTag(Loader.FRAGMENT_TAG);
         if (fragment != null) {
-            // fragment.dismissAllowingStateLoss();
+//             fragment.dismissAllowingStateLoss();
             getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        showLoadingDialog();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,18 +143,19 @@ public class UploadActivity extends AppCompatActivity {
 
             String action = getIntent().getStringExtra("ACTION");
 
+
             if (action != null && action.equals("CAMERA")) {
                 openCameraForImage();
             } else {
                 openGalleryForImage();
             }
-
         }
 
 
         ImageButton button = (ImageButton) findViewById(R.id.goBackHome);
         button.setOnClickListener((View.OnClickListener) (new View.OnClickListener() {
             public final void onClick(View it) {
+
                 Intent myintent = new Intent(UploadActivity.this, MainActivity.class);
                 startActivity(myintent);
             }
@@ -171,11 +177,11 @@ public class UploadActivity extends AppCompatActivity {
 
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
         super.onActivityResult(requestCode, resultCode, data);
 
-
         if (resultCode == RESULT_OK && data != null) {
-
+            showLoadingDialog();
 
             if (requestCode == GALLERY_REQ) {
                 Uri uri = data.getData();
@@ -183,28 +189,11 @@ public class UploadActivity extends AppCompatActivity {
                 imageView.setImageURI(uri);
                 Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
 
-                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-                    findCelebrity(ByteBuffer.wrap(baos.toByteArray()));
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
-
+                new ImageAsyncTask().execute(bitmap);
             } else if (requestCode == TAKE_PHOTO_REQ) {
-
-
                 Bitmap srcBmp = (Bitmap) data.getExtras().get("data");
-                ImageView imageView = (ImageView) this.findViewById(R.id.imageBox);
-                imageView.setImageBitmap(srcBmp);
-
-                try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-                    srcBmp.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-                    findCelebrity(ByteBuffer.wrap(baos.toByteArray()));
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                }
+                new ImageAsyncTask().execute(srcBmp);
             }
-
         }
     }
 
@@ -236,6 +225,8 @@ public class UploadActivity extends AppCompatActivity {
                         boundingBox.getLeft().toString() + " " +
                                 boundingBox.getTop().toString());
                 Log.i("more info", "Further information (if available):");
+
+                hideLoadingDialog();
                 for (String url : celebrity.getUrls()) {
                     Log.i(url, "url");
 
@@ -293,7 +284,6 @@ public class UploadActivity extends AppCompatActivity {
 
 
                 for (int i = 0; i < Jarray.length(); i++) {
-
                     JSONObject object = Jarray.getJSONObject(i);
 
                     View inflatedView = inflater.inflate(R.layout.image_item, null);
@@ -302,16 +292,50 @@ public class UploadActivity extends AppCompatActivity {
                     Picasso.get().load(Uri.parse(object.getString("image"))).into(imgView);
                     moviesLayout.addView(imgView);
 
+                    TextView movieId = (TextView) findViewById(R.id.movieID);
+                    movieId.setText(Jobject.getString("id"));
+
+
+//                    for(null != imgView) {
+//
+//                    }
                 }
+
 
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
     }
 
+    private class ImageAsyncTask extends AsyncTask<Bitmap, Void, byte[]> {
 
+        @Override
+        protected byte[] doInBackground(Bitmap... bitmaps) {
+            Bitmap bitmap = bitmaps[0];
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                return baos.toByteArray();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(byte[] bytes) {
+            super.onPostExecute(bytes);
+
+            try {
+                findCelebrity(ByteBuffer.wrap(bytes));
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
+            hideLoadingDialog();
+        }
+    }
 }
 
