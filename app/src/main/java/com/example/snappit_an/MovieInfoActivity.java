@@ -1,6 +1,10 @@
 package com.example.snappit_an;
 
+import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,14 +13,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.URLUtil;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.squareup.picasso.Picasso;
 
@@ -62,10 +71,32 @@ public class MovieInfoActivity extends AppCompatActivity {
             }
 
             Log.i("JSON: ","jsonBody");
+
         }
+
+        ImageButton goBack = (ImageButton) findViewById(R.id.goBackToResults);
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent backToResults = new Intent(MovieInfoActivity.this, MainActivity.class);
+                startActivity(backToResults);
+            }
+        });
+        hideSystemUI();
 
     }
 
+    public void hideSystemUI() {
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
+    @SuppressLint("ResourceType")
     public void requestIMDB(String movieId) throws JSONException {
         if (movieId == null || movieId.isEmpty()) {
             return;
@@ -79,6 +110,7 @@ public class MovieInfoActivity extends AppCompatActivity {
                 .build();
         Response response = null;
 
+
         try {
             response = client.newCall(request).execute();
 
@@ -88,9 +120,10 @@ public class MovieInfoActivity extends AppCompatActivity {
                 JSONObject Jobject = new JSONObject(jsonData);
 
                 String movieID = Jobject.getString("videoId");
-                String frameVideo = "<html><body><br><iframe width=\"420\" height=\"315\" src= \"https://www.youtube.com/embed/" + movieID + "\" frameborder=\"0\" allowfullscreen></iframe></body></html>";
-                WebView displayYoutubeVideo = (WebView) findViewById(R.id.webView);
 
+                String frameVideo = "<html><iframe height=\"300\" width=\"400\"  src= \"https://www.youtube.com/embed/" + movieID + "\" frameborder=\"0\" allowfullscreen></iframe></html>";
+                WebView displayYoutubeVideo = (WebView) findViewById(R.id.webView);
+                displayYoutubeVideo.setBackgroundColor(Color.BLACK);
 
                 displayYoutubeVideo.setWebViewClient(new WebViewClient() {
                     @Override
@@ -104,6 +137,7 @@ public class MovieInfoActivity extends AppCompatActivity {
 
                 TextView mTextView = (TextView) findViewById(R.id.movieName);
                 mTextView.setText(Jobject.getString("fullTitle"));
+
 
             }
         } catch (IOException e) {

@@ -4,26 +4,71 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/dark_blue"
     tools:context=".MovieInfoActivity"
     android:layout_height="match_parent">
 
-    <WebView
-        android:id="@+id/webView"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </WebView>
 
     <TextView
         android:id="@+id/movieName"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="108dp"
+        android:fontFamily="@font/poppins_extra_bold"
+        android:text="Hello Movie"
+        android:textAlignment="center"
+        android:textColor="@color/background_blue"
+        android:textSize="11pt"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/webView">
+        app:layout_constraintTop_toBottomOf="@+id/goBackToResults">
 
     </TextView>
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="48dp"
+        app:layout_constraintTop_toBottomOf="@+id/movieName"
+        tools:layout_editor_absoluteX="0dp">
+
+    </WebView>
+
+    <ImageButton
+        android:id="@+id/goBackToResults"
+        android:layout_width="80dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/transparent"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.048"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/back_white" />
+
+    <ImageView
+        android:id="@+id/imageView16"
+        android:layout_width="62dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/goBackToResults"
+        app:srcCompat="@drawable/lines" />
+
+    <ImageView
+        android:id="@+id/imageView17"
+        android:layout_width="297dp"
+        android:layout_height="313dp"
+        android:layout_marginTop="10pt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.432"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/webView"
+        app:srcCompat="@drawable/pointing" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
