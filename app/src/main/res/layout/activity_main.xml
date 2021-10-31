@@ -104,4 +104,17 @@
         app:layout_constraintStart_toStartOf="@+id/fab2"
         app:layout_constraintTop_toTopOf="@+id/fab2" />
 
+    <ImageButton
+        android:id="@+id/settings_img"
+        android:layout_width="70dp"
+        android:layout_height="66dp"
+        android:layout_marginStart="16dp"
+        android:background="@color/transparent"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/imageView5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/setting_dynamic_color" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

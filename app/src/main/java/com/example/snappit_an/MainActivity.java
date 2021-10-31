@@ -111,6 +111,15 @@ public class MainActivity extends AppCompatActivity {
 
         }));
 
+        ImageButton settings = (ImageButton) findViewById(R.id.settings_img);
+        settings.setOnClickListener((View.OnClickListener) (new View.OnClickListener() {
+            public final void onClick(View it) {
+                Intent mySettingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(mySettingsIntent);
+            }
+
+        }));
+
         hideSystemUI();
     }
 

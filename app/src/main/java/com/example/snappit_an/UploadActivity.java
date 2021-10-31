@@ -244,10 +244,12 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
+        showLoadingDialog();
         Intent movieInfoIntent = new Intent(UploadActivity.this, MovieInfoActivity.class);
         String id = view.getTag().toString();
         movieInfoIntent.putExtra("id", id);
         startActivity(movieInfoIntent);
+        hideLoadingDialog();
     }
 
     public void requestIMDB(String nameID) throws JSONException {

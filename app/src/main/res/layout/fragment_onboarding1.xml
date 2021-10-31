@@ -14,38 +14,25 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:text="Skip"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.866"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottie"
-        android:layout_width="wrap_content"
-        android:layout_height="250dp"
-        android:layout_marginTop="76dp"
-        android:background="@color/transparent"
-        android:elevation="2dp"
-        app:layout_constraintEnd_toStartOf="@+id/skip_text"
-        app:layout_constraintHorizontal_bias="0.378"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/draw"></com.airbnb.lottie.LottieAnimationView>
-
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
         android:fontFamily="@font/poppins_regular"
         android:text="Make remembering "
+        android:textColor="@color/dark_blue"
+
         android:textSize="8pt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.202"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lottie" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView10" />
 
     <TextView
         android:id="@+id/textView6"
@@ -54,6 +41,7 @@
         android:fontFamily="@font/poppins_extra_bold"
         android:text="Easy"
         android:textSize="20pt"
+        android:textColor="@color/dark_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.151"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,9 +52,10 @@
         android:id="@+id/textView7"
         android:layout_width="196dp"
         android:layout_height="69dp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/poppins_regular"
-        android:text="Remember an actors name in an instant, no more bothers"
+        android:text="Remember an actors or celebrities name in an instant, no more bothers."
+        android:textColor="@color/dark_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.209"
         app:layout_constraintStart_toStartOf="parent"
@@ -84,6 +73,17 @@
         app:layout_constraintTop_toBottomOf="@+id/textView7"
         app:layout_constraintVertical_bias="0.945"
         app:srcCompat="@drawable/progress1" />
+
+    <ImageView
+        android:id="@+id/imageView10"
+        android:layout_width="288dp"
+        android:layout_height="373dp"
+        android:layout_marginTop="56dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.69"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/onboarding_one" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

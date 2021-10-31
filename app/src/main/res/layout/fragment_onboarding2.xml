@@ -12,45 +12,33 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:text="Skip"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.866"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottie"
-        android:layout_width="wrap_content"
-        android:layout_height="250dp"
-        android:layout_marginTop="76dp"
-        android:background="@color/transparent"
-        android:elevation="2dp"
-        app:layout_constraintEnd_toStartOf="@+id/skip_text"
-        app:layout_constraintHorizontal_bias="0.378"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/draw"></com.airbnb.lottie.LottieAnimationView>
-
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="404dp"
         android:fontFamily="@font/poppins_regular"
-        android:text="Make remembering "
+        android:text="Capture the"
+        android:textColor="@color/white"
         android:textSize="8pt"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.202"
+        app:layout_constraintHorizontal_bias="0.15"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lottie" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_extra_bold"
-        android:text="Easy"
+        android:text="Face"
+        android:textColor="@color/white"
         android:textSize="20pt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.151"
@@ -60,13 +48,14 @@
 
     <TextView
         android:id="@+id/textView7"
-        android:layout_width="196dp"
-        android:layout_height="69dp"
-        android:layout_marginTop="56dp"
+        android:layout_width="285dp"
+        android:layout_height="87dp"
+        android:textColor="@color/white"
+        android:layout_marginTop="40dp"
         android:fontFamily="@font/poppins_regular"
-        android:text="Remember an actors name in an instant, no more bothers"
+        android:text="Using either your camera to take a photo, or upload from your gallery, send us that familiar face and we'll handle the rest!"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.209"
+        app:layout_constraintHorizontal_bias="0.357"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
@@ -82,5 +71,15 @@
         app:layout_constraintTop_toBottomOf="@+id/textView7"
         app:layout_constraintVertical_bias="0.945"
         app:srcCompat="@drawable/progress2" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginBottom="164dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/onboarding_three" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
