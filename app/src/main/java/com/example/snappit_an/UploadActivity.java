@@ -99,8 +99,6 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
             getSupportFragmentManager().beginTransaction()
                     .add(fragment, Loader.FRAGMENT_TAG)
                     .commitAllowingStateLoss();
-
-//             fragment.show(getSupportFragmentManager().beginTransaction(), Loader.FRAGMENT_TAG);
         }
 
     }
@@ -108,7 +106,6 @@ public class UploadActivity extends AppCompatActivity implements View.OnClickLis
     public void hideLoadingDialog() {
         Loader fragment = (Loader) getSupportFragmentManager().findFragmentByTag(Loader.FRAGMENT_TAG);
         if (fragment != null) {
-//             fragment.dismissAllowingStateLoss();
             getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
         }
     }

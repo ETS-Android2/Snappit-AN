@@ -21,4 +21,9 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:statusBarColor">@color/colorAccent</item>
     </style>
+
+    <style name="ThemeOverlay.SnappitAN.AppWidgetContainer" parent="">
+        <item name="appWidgetBackgroundColor">@color/light_blue_600</item>
+        <item name="appWidgetTextColor">@color/light_blue_50</item>
+    </style>
 </resources>

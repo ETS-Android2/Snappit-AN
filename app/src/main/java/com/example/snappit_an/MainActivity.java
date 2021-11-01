@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
     public void getCredential() {
         amazonRekognitionClient = new AmazonRekognitionClient(new AWSUtil());
         amazonRekognitionClient.setRegion(Region.getRegion(Regions.US_EAST_1));
-
     }
 
 
@@ -96,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, UploadActivity.class);
                 intent.putExtra("ACTION", "CAMERA");
                 startActivity(intent);
-
             }
 
         });
@@ -133,7 +131,5 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
-
-
 
 }
