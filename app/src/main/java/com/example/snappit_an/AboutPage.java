@@ -1,6 +1,7 @@
 package com.example.snappit_an;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +24,16 @@ public class AboutPage extends AppCompatActivity {
                 Intent myHomeIntent = new Intent(AboutPage.this, SettingsActivity.class);
                 startActivity(myHomeIntent);
                 finish();
+            }
+        }));
+
+        String githubLink = "https://github.com/ClaudiaAF/Snappit-AN.git";
+        ImageButton github = (ImageButton) findViewById(R.id.github);
+        github.setOnClickListener((View.OnClickListener) (new View.OnClickListener() {
+            public final void onClick(View it) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(githubLink));
+                startActivity(i);
             }
         }));
 
