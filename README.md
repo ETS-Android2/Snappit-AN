@@ -182,6 +182,9 @@ The technical implementations and functionality done in the frontend and backend
 ![Group 54](https://user-images.githubusercontent.com/64257497/139680467-5185a5e7-8aa0-427b-a4b1-9a9103d21d1e.png)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ![Group 55](https://user-images.githubusercontent.com/64257497/139680478-b773aaa3-9052-488b-ac41-c42a3b468bd5.png)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+![ClaudiaFerreira_180181_DV304_Mockup_1](https://user-images.githubusercontent.com/64257497/139720933-0c785e82-ee8c-42bf-b41f-13da122df495.png)
+
 
 ### Video Demonstration
 
@@ -192,6 +195,9 @@ https://user-images.githubusercontent.com/64257497/139685196-903eb1a3-0d8c-43a5-
 
 Click <a href="https://drive.google.com/file/d/1QXrJQOuAZ_5t4P9lWcLAZCXnLEOQOUIa/view?usp=sharing">here</a> to view the video demonstration from Google Drive.
 
+
+### Promotional Material
+Click <a href="https://drive.google.com/file/d/19tTWSoUsR5SVFbL6WMTgpCTtzQJP6dNu/view?usp=sharing">here</a> to view the promotional Video.
 <!-- ROADMAP -->
 ## Roadmap
 
